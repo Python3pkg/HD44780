@@ -6,9 +6,9 @@ import re
 import time
 import warnings
 
-from backends import *
-from inputs import *
-from utils import *
+from .backends import *
+from .inputs import *
+from .utils import *
 
 class Display:
 	CONTROL_CHARACTERS = (0x0D, 0x18, 0x1B, 0x7F)
@@ -36,7 +36,7 @@ class Display:
 					for filename in files:
 						charmap[int(filename.split(".")[0])] = open(os.path.join(charmap['dir'], filename), 'rb')
 					del charmap['dir']
-				for pos, char in charmap.iteritems():
+				for pos, char in charmap.items():
 					self.load_custom_character(pos, char)
 			self.set_cursor_position(0, 0)
 	
@@ -47,7 +47,7 @@ class Display:
 	
 	def write_value(self, value, data = True):
 		if self.debug:
-			print "Writing   %i / %s / %s / %s" % (value, hex(value), bin(value), chr(value))
+			print("Writing   %i / %s / %s / %s" % (value, hex(value), bin(value), chr(value)))
 		nibbles = value_to_nibbles(value)
 		if data:
 			self.backend.high(self.backend.PIN_RS)
@@ -241,7 +241,7 @@ class Display:
 		t = type(data)
 		if t is int:
 			return self.write_value(data)
-		elif t in [str, unicode]:
+		elif t in [str, str]:
 			if data.startswith(chr(27)):
 				return self.process_escape_sequence(data)
 			else:
@@ -341,7 +341,7 @@ class DisplayUI:
 		if self.debug:
 			header = "╔%s╗" % ("═" * self.display.column_count)
 			footer = "╚%s╝" % ("═" * self.display.column_count)
-			print header + "\n%s\n" % "\n".join(["║%s║" % line.ljust(self.display.column_count) for line in self.viewport]) + footer
+			print(header + "\n%s\n" % "\n".join(["║%s║" % line.ljust(self.display.column_count) for line in self.viewport]) + footer)
 		self.display.set_cursor_position(0, 0)
 		self.display.write("\n".join(self.stored_lines))
 	
@@ -401,7 +401,7 @@ class DisplayUI:
 		done = False
 		while not done:
 			title = self._align(title, align)
-			buttons = tuple([(button, None) if type(button) in [str, unicode] else button for button in buttons])
+			buttons = tuple([(button, None) if type(button) in [str, str] else button for button in buttons])
 			button_row = self.format_buttons(buttons, active = active)
 			self.update((title, button_row))
 			self.redraw()
@@ -432,7 +432,7 @@ class DisplayUI:
 		return active, selected[0]
 	
 	def progress_bar(self, title, fraction = 0.0, char = "#", align = 'left'):
-		assert type(char) in [str, unicode]
+		assert type(char) in [str, str]
 		title = self._align(title, align)
 		char = char[0]
 		count = int(self.display.column_count * fraction)
@@ -446,7 +446,7 @@ class DisplayUI:
 		first_loop = True
 		while not done:
 			title = self._align(title, align)
-			entries = tuple([(entry, None) if type(entry) in [str, unicode] else entry for entry in entries])
+			entries = tuple([(entry, None) if type(entry) in [str, str] else entry for entry in entries])
 			entry_rows = self.format_list_entries(entries, align = align, active = active)
 			self.update([title] + list(entry_rows), home = first_loop)
 			self.redraw()
@@ -566,7 +566,7 @@ class DisplayUI:
 		return selected
 	
 	def message(self, data, align = 'left', wrap = True, duration = 0.0):
-		if type(data) in [str, unicode]:
+		if type(data) in [str, str]:
 			data = data.splitlines()
 		data = self.format_lines(data, align, wrap)
 		self.update(data)

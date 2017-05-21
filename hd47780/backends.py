@@ -3,7 +3,7 @@
 
 import sys
 import time
-from utils import *
+from .utils import *
 
 class K8055Backend:
 	def __init__(self, display, pinmap, board = None, port = 0):
@@ -17,8 +17,8 @@ class K8055Backend:
 			except:
 				raise IOError("Could not establish a connection to the K8055 board.")
 		
-		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.iteritems()])
-		for pin, output in pinmap.iteritems():
+		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.items()])
+		for pin, output in pinmap.items():
 			setattr(self, 'PIN_%s' % pin, output)
 			if pin == 'LED':
 				self.led_pwm = output > 8
@@ -63,8 +63,8 @@ class GPIOBackend:
 		except:
 			raise IOError("Could not export the GPIO pins. Make sure that you have the wiringpi library installed, run as root and are on a Raspberry Pi.")
 		
-		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.iteritems()])
-		for pin, output in pinmap.iteritems():
+		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.items()])
+		for pin, output in pinmap.items():
 			setattr(self, 'PIN_%s' % pin, output)
 			if pin == 'LED':
 				self.led_pwm = output == 18
@@ -81,7 +81,7 @@ class GPIOBackend:
 		self.low(output)
 	
 	def all_low(self):
-		for output in self.reverse_pinmap.keys():
+		for output in list(self.reverse_pinmap.keys()):
 			self.low(output)
 	
 	def write_nibble(self, nibble, data = True):
@@ -109,8 +109,8 @@ class ArduinoBackend:
 		except:
 			raise IOError("Could not open the Arduino. Make sure you are running as root and are using the correct device name.")
 		
-		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.iteritems()])
-		for pin, output in pinmap.iteritems():
+		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.items()])
+		for pin, output in pinmap.items():
 			setattr(self, 'PIN_%s' % pin, output)
 			if pin == 'LED':
 				self.led_pwm = output in pwm_outputs
@@ -126,7 +126,7 @@ class ArduinoBackend:
 		self.low(output)
 	
 	def all_low(self):
-		for output in self.reverse_pinmap.keys():
+		for output in list(self.reverse_pinmap.keys()):
 			self.low(output)
 	
 	def write_nibble(self, nibble, data = True):
@@ -162,9 +162,9 @@ class DebugBackend:
 			['D7', False],
 			['LED', False],
 		]
-		self.pinmap = dict([(key, [_key for _key, value in self.output_states].index(key)) for key, value in pinmap.iteritems()])
-		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.iteritems()])
-		for pin, output in self.pinmap.iteritems():
+		self.pinmap = dict([(key, [_key for _key, value in self.output_states].index(key)) for key, value in pinmap.items()])
+		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.items()])
+		for pin, output in self.pinmap.items():
 			setattr(self, 'PIN_%s' % pin, output)
 		sys.stdout.write("\033[?25l")
 	

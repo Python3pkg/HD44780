@@ -6,7 +6,7 @@ import termios
 import time
 import tty
 
-from backends import GPIOBackend
+from .backends import GPIOBackend
 
 class SystemInput:
 	def __init__(self, ui):
@@ -61,8 +61,8 @@ class GPIOInput:
 		import wiringpi
 		self.ui = ui
 		self.gpio = self.ui.display.backend.gpio
-		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.iteritems()])
-		for pin, output in pinmap.iteritems():
+		self.reverse_pinmap = dict([(value, key) for key, value in pinmap.items()])
+		for pin, output in pinmap.items():
 			setattr(self, 'PIN_%s' % pin, output)
 			is_input = pin in ('UP', 'LEFT', 'OK', 'RIGHT', 'DOWN')
 			self.gpio.pinMode(output, self.gpio.INPUT if is_input else self.gpio.OUTPUT)
